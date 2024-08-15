@@ -11,6 +11,7 @@ interface Props {
   className?: string;
   fontSize?: number;
   id?: string;
+  rounded?: string;
 }
 
 export function Button({
@@ -24,6 +25,7 @@ export function Button({
   className,
   fontSize = 14,
   id,
+  rounded,
 }: Props) {
   const width = block ? "w-full" : "w-max";
   const height =
@@ -44,7 +46,7 @@ export function Button({
         disabled={disabled}
         onClick={() => onClick && onClick()}
         style={{ fontSize: fontSize }}
-        className={`${width} ${height} px-4 font-semibold rounded-lg text-center bg-blue-500 text-white border cursor-pointer transition-all flex items-center justify-center ${
+        className={`${width} ${height} px-4 font-semibold ${rounded} text-center bg-blue-500 text-white border cursor-pointer transition-all flex items-center justify-center ${
           disabled ? "opacity-70" : "opacity-100"
         } ${className}`}
       >
@@ -64,7 +66,7 @@ export function Button({
         disabled={disabled}
         onClick={() => onClick && onClick()}
         style={{ fontSize: fontSize }}
-        className={`${width} ${height} px-4 font-semibold rounded-lg text-center bg-transparent border-blue-500 text-blue-500 border cursor-pointer transition-all flex items-center justify-center ${
+        className={`${width} ${height} px-4 font-semibold ${rounded} text-center bg-transparent border-blue-500 text-blue-500 border cursor-pointer transition-all flex items-center justify-center ${
           disabled ? "opacity-70" : "opacity-100"
         }  ${className}`}
       >

@@ -23,10 +23,17 @@ export default function Section1() {
             <Button
               text="Create Provenance Graph"
               block
+              rounded="rounded-xl"
               type="primary"
               size="md"
             />
-            <Button text="Learn More" block type="outlined" size="md" />
+            <Button
+              text="Learn More"
+              block
+              rounded="rounded-xl"
+              type="outlined"
+              size="md"
+            />
           </div>
         </div>
       </div>

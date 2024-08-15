@@ -1,15 +1,8 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Navigate,
-  Outlet,
-  Route,
-  Routes,
-  useLocation,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Landing from "./pages/Home/Landing";
+import CreateProv from "./pages/CreateProv/CreateProv";
 
 function App() {
   return (
@@ -18,6 +11,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/create-prov" element={<CreateProv />} />
           </Routes>
         </Router>
       </div>

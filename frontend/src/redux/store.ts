@@ -1,10 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import provSlice from "./reducers/provSlice";
+import documentSlice from "./reducers/documentSlice";
 
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     prov: provSlice,
+    doc: documentSlice,
   },
 });
 
-export default store;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

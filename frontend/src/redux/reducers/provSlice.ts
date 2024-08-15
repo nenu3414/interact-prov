@@ -1,8 +1,16 @@
 // src/redux/slices/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface IInitalState {
+  prov: any;
+  error: string;
+  loading: boolean;
+}
+
+const initialState: IInitalState = {
   prov: null,
+  error: "",
+  loading: false,
 };
 
 const provSlice = createSlice({
