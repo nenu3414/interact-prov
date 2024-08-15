@@ -13,7 +13,9 @@ export default function Nav() {
         </div>
         <div className="w-full flex items-center justify-end">
           <ul className="flex gap-8 mr-5 items-center font-medium">
-            <li className="cursor-pointer">Home</li>
+            <Link to="/" className="">
+              <li className="cursor-pointer">Home</li>
+            </Link>
             <Link to="/create-prov" className="">
               <li className="cursor-pointer">Create Prov</li>
             </Link>

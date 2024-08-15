@@ -6,9 +6,12 @@ import { OverlayDialog } from "../../components/OverlayDialog";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/useRedux";
 import { saveDocument } from "../../redux/reducers/documentSlice";
+import Stepper from "../../components/CreateProv/Stepper";
+import AddEntityNew from "../../components/CreateProv/AddEntityNew";
 
 export default function CreateProv() {
   const [isOverlayOpen, setIsOverlayOpen] = useState(true);
+  const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const document = useAppSelector((state) => state.doc);
@@ -30,10 +33,11 @@ export default function CreateProv() {
 
   useEffect(() => {
     // Check if document data already exists in the store
-    if (!document.documentName) {
+    if (document.documentName === "" || document.author === "") {
       setIsOverlayOpen(true); // Show overlay if no document data exists
+    } else {
+      setIsOverlayOpen(false);
     }
-    setIsOverlayOpen(false);
   }, [document]);
 
   useEffect(() => {
@@ -69,50 +73,18 @@ export default function CreateProv() {
                   />
                   <div>
                     <p className="text-sm">
-                      {document?.documentName.toUpperCase() || "PROV DOC"}
+                      {document?.documentName.toUpperCase() /* || "PROV DOC" */}
                     </p>
                     <p className="text-sm text-gray-400">
-                      {document?.author.toUpperCase() || "Interact-PROV"}
+                      {document?.author.toUpperCase() /* || "Interact-PROV" */}
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-2">
-                    <p className="flex justify-center items-center w-5 h-5 rounded-full border-black border-solid border-[1px]">
-                      1
-                    </p>
-                    <p className="font-medium">Adding Entity</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="flex justify-center items-center w-5 h-5 rounded-full border-black border-solid border-[1px]">
-                      2
-                    </p>
-                    <p className="font-medium">Adding Activity</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="flex justify-center items-center w-5 h-5 rounded-full border-black border-solid border-[1px]">
-                      3
-                    </p>
-                    <p className="font-medium">Adding Agent</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="flex justify-center items-center w-5 h-5 rounded-full border-black border-solid border-[1px]">
-                      4
-                    </p>
-                    <p className="font-medium">Define Relationship</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="flex justify-center items-center w-5 h-5 rounded-full border-black border-solid border-[1px]">
-                      5
-                    </p>
-                    <p className="font-medium">Visualize</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <p className="flex justify-center items-center w-5 h-5 rounded-full border-black border-solid border-[1px]">
-                      6
-                    </p>
-                    <p className="font-medium">Export</p>
-                  </div>
+                <div>
+                  <Stepper
+                    currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
+                  />
                 </div>
               </div>
               <div className="px-10 pb-5">
@@ -124,7 +96,9 @@ export default function CreateProv() {
                 />
               </div>
             </div>
-            <div className="w-3/4">2</div>
+            <div className="w-3/4 flex pb-5">
+              <AddEntityNew />
+            </div>
           </div>
         </div>
       )}
