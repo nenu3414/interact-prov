@@ -8,13 +8,15 @@ import { useAppDispatch, useAppSelector } from "../../redux/useRedux";
 import { saveDocument } from "../../redux/reducers/documentSlice";
 import Stepper from "../../components/CreateProv/Stepper";
 import AddEntityNew from "../../components/CreateProv/AddEntityNew";
+import AddActivityNew from "../../components/CreateProv/AddActivityNew";
+import AddAgentNew from "../../components/CreateProv/AddAgentNew";
 
 export default function CreateProv() {
   const [isOverlayOpen, setIsOverlayOpen] = useState(true);
-  const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const document = useAppSelector((state) => state.doc);
+  const currentStep = useAppSelector((state) => state.step.currentStep);
 
   const handleCloseOverlay = () => {
     setIsOverlayOpen(false);
@@ -26,7 +28,6 @@ export default function CreateProv() {
     author: string;
     isPublic: boolean;
   }) => {
-    // console.log("Document saved:", data);
     dispatch(saveDocument(data));
     setIsOverlayOpen(false);
   };
@@ -81,23 +82,44 @@ export default function CreateProv() {
                   </div>
                 </div>
                 <div>
-                  <Stepper
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                  />
+                  <Stepper />
                 </div>
               </div>
               <div className="px-10 pb-5">
-                <Button
-                  text="Add New Entity"
-                  rounded="rounded-full"
-                  type="primary"
-                  size="sm"
-                />
+                {currentStep === 0 ? (
+                  <Button
+                    text="Add New Entity"
+                    rounded="rounded-full"
+                    type="primary"
+                    size="sm"
+                  />
+                ) : currentStep === 1 ? (
+                  <Button
+                    text="Add New Activity"
+                    rounded="rounded-full"
+                    type="primary"
+                    size="sm"
+                  />
+                ) : currentStep === 2 ? (
+                  <Button
+                    text="Add New Agent"
+                    rounded="rounded-full"
+                    type="primary"
+                    size="sm"
+                  />
+                ) : null}
               </div>
             </div>
             <div className="w-3/4 flex pb-5">
-              <AddEntityNew />
+              {currentStep === 0 ? (
+                <AddEntityNew /> //entity
+              ) : currentStep === 1 ? (
+                <AddActivityNew /> //activity
+              ) : currentStep === 2 ? (
+                <AddAgentNew /> //agent
+              ) : currentStep === 3 ? (
+                <AddActivityNew /> //relationship
+              ) : null}
             </div>
           </div>
         </div>

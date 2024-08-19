@@ -2,22 +2,22 @@ import React, { useEffect, useState } from "react";
 import TextInput from "../Common/TextInput";
 import { Button } from "../Common/Button";
 import { toast } from "react-toastify";
-import { IEntity, addEntity } from "../../redux/reducers/provSlice";
+import { IActivity, addActivity } from "../../redux/reducers/provSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/useRedux";
 import { incrementMaxStep } from "../../redux/reducers/stepSlice";
 
-export default function AddEntityNew() {
-  const [formData, setFormData] = useState<IEntity>({
+export default function AddActivityNew() {
+  const [formData, setFormData] = useState<IActivity>({
     id: "",
-    type: "",
     name: "",
     desc: "",
-    date: "",
-    location: "",
-    version: "",
+    startTime: "",
+    endTime: "",
+    consumed: "",
+    generated: "",
   });
   const dispatch = useAppDispatch();
-  const entities = useAppSelector((state) => state.prov.entities);
+  const activities = useAppSelector((state) => state.prov.activities);
 
   const handleChange = (
     e:
@@ -49,11 +49,11 @@ export default function AddEntityNew() {
 
   useEffect(() => {
     // If you need to initialize formData based on existing entities:
-    if (entities.length > 0) {
-      const [firstEntity] = entities;
-      setFormData(firstEntity);
+    if (activities.length > 0) {
+      const [firstActivity] = activities;
+      setFormData(firstActivity);
     }
-  }, [entities]);
+  }, [activities]);
 
   const generateUniqueId = () => {
     return `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
@@ -61,14 +61,14 @@ export default function AddEntityNew() {
 
   const handleSave = () => {
     dispatch(
-      addEntity({
+      addActivity({
         id: formData.id,
-        type: formData.type,
         name: formData.name,
         desc: formData.desc,
-        date: formData.date,
-        location: formData.location,
-        version: formData.version,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        consumed: formData.consumed,
+        generated: formData.generated,
       })
     );
     toast.success("Saved successfully!");
@@ -76,23 +76,23 @@ export default function AddEntityNew() {
 
   const handleSaveAndNext = () => {
     dispatch(
-      addEntity({
+      addActivity({
         id: formData.id,
-        type: formData.type,
         name: formData.name,
         desc: formData.desc,
-        date: formData.date,
-        location: formData.location,
-        version: formData.version,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        consumed: formData.consumed,
+        generated: formData.generated,
       })
     );
-    toast.success("Entity saved successfully!");
+    toast.success("Activity saved successfully!");
     dispatch(incrementMaxStep());
   };
 
   return (
     <div className="w-full basis-1/2">
-      <h2 className="text-2xl font-semibold">Add Entity</h2>
+      <h2 className="text-2xl font-semibold">Add Activity</h2>
       <form onSubmit={(e) => e.preventDefault()} className="pt-4">
         <div className="">
           <TextInput
@@ -107,23 +107,12 @@ export default function AddEntityNew() {
         </div>
         <div className="">
           <TextInput
-            label="Type"
-            id="type"
-            value={formData.type}
-            onChange={handleChange}
-            placeholder="Type"
-            helperText={"Type of Entity"}
-            required={true}
-          />
-        </div>
-        <div className="">
-          <TextInput
             label="Name"
             id="name"
             value={formData.name}
             onChange={handleChange}
             placeholder="Name"
-            helperText={"Name of dataset"}
+            helperText={"Name of activity"}
             required={true}
           />
         </div>
@@ -134,40 +123,53 @@ export default function AddEntityNew() {
             value={formData.desc}
             onChange={handleChange}
             placeholder="Description"
-            helperText={"Desceription of dataset like what is about"}
+            helperText={"Desceription of activity like what is about"}
             required={true}
           />
         </div>
         <div className="">
           <TextInput
             type="date"
-            label="Date of Creation/Collection"
-            id="date"
-            value={formData.date}
+            label="Start Time"
+            id="startTime"
+            value={formData.startTime}
             onChange={handleChange}
-            helperText={"Date on which this dataset was collected/created"}
+            placeholder="dd/mm/yyyy"
+            helperText={"Start time of activity"}
             required={true}
           />
         </div>
         <div className="">
           <TextInput
-            label="Location"
-            id="location"
-            value={formData.location}
+            type="date"
+            label="End Time"
+            id="endTime"
+            value={formData.endTime}
             onChange={handleChange}
-            placeholder="Location"
-            helperText={"Where was collected/created"}
+            placeholder="dd/mm/yyyy"
+            helperText={"End time of activity"}
             required={true}
           />
         </div>
         <div className="">
           <TextInput
-            label="Version"
-            id="version"
-            value={formData.version}
+            label="Consumed"
+            id="consumed"
+            value={formData.consumed}
             onChange={handleChange}
-            placeholder="Version"
-            helperText={"version of dataset"}
+            placeholder="Consumed entity"
+            helperText={"Consumed some or whole part of entity"}
+            required={true}
+          />
+        </div>
+        <div className="">
+          <TextInput
+            label="Generated"
+            id="generated"
+            value={formData.generated}
+            onChange={handleChange}
+            placeholder="Generated entity"
+            helperText={"Generated some form of entity"}
             required={true}
           />
         </div>

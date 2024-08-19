@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../redux/useRedux";
+import { setStep } from "../../redux/reducers/stepSlice";
 
-export default function Stepper({ currentStep, setCurrentStep }: any) {
+export default function Stepper() {
   const steps = [
     "Adding Entity",
     "Adding Activity",
@@ -9,10 +11,22 @@ export default function Stepper({ currentStep, setCurrentStep }: any) {
     "Visualize",
     "Export",
   ];
+  const dispatch = useAppDispatch();
+  const { currentStep, maxStep } = useAppSelector((state: any) => state.step);
+
+  const handleStepClick = (step: number) => {
+    if (step <= maxStep) {
+      dispatch(setStep(step));
+    }
+  };
   return (
     <div className="flex flex-col gap-4">
       {steps?.map((step, i) => (
-        <div className="flex items-center gap-2" key={i}>
+        <div
+          className="flex items-center gap-2 cursor-pointer"
+          key={i}
+          onClick={() => handleStepClick(i)}
+        >
           <p
             className={`${
               currentStep === i

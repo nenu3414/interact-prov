@@ -44,7 +44,7 @@ export function OverlayDialog({ isOpen, onClose, onSave }: OverlayProps) {
           />
         </div>
         <div className="mb-4">
-          <label className="inline-flex items-center">
+          <label className="inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
               checked={isPublic}
@@ -54,18 +54,18 @@ export function OverlayDialog({ isOpen, onClose, onSave }: OverlayProps) {
             <span className="ml-2">Save as public</span>
           </label>
         </div>
-        <div className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="bg-gray-500 text-white px-4 py-2 rounded mr-2"
-          >
-            Cancel
-          </button>
+        <div className="flex justify-end gap-3">
           <button
             onClick={() => onSave({ documentName, author, isPublic })}
             className="bg-blue-500 text-white px-4 py-2 rounded"
           >
             Save
+          </button>
+          <button
+            onClick={onClose}
+            className="bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            Cancel
           </button>
         </div>
       </div>

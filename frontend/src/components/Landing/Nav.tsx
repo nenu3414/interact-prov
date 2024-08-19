@@ -1,6 +1,6 @@
 import React from "react";
 import { LOGO } from "../../assets/logos";
-import { Button } from "../Common/Button";
+// import { Button } from "../Common/Button";
 import { Link } from "react-router-dom";
 
 export default function Nav() {
@@ -17,12 +17,13 @@ export default function Nav() {
               <li className="cursor-pointer">Home</li>
             </Link>
             <Link to="/create-prov" className="">
-              <li className="cursor-pointer">Create Prov</li>
+              <li className="cursor-pointer">Create PROV</li>
             </Link>
-            <li className="cursor-pointer">View</li>
-            {/* <li>Validate</li>
+            <li className="cursor-pointer">Help</li>
+            {/* <li className="cursor-pointer">View</li>
+            <li>Validate</li>
             <li>Bulk Upload</li> */}
-            <div>
+            {/* <div>
               <Button
                 text="New"
                 block
@@ -39,7 +40,7 @@ export default function Nav() {
                 type="outlined"
                 size="sm"
               />
-            </div>
+            </div> */}
           </ul>
         </div>
       </div>
