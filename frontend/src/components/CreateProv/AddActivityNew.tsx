@@ -5,19 +5,35 @@ import { toast } from "react-toastify";
 import { IActivity, addActivity } from "../../redux/reducers/provSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/useRedux";
 import { incrementMaxStep } from "../../redux/reducers/stepSlice";
+import Dropdown from "../Common/Dropdown";
 
 export default function AddActivityNew() {
+  const [dropdownOptions, setDropdownOptions] = useState([
+    { label: "Please Select", value: "" },
+  ]);
   const [formData, setFormData] = useState<IActivity>({
     id: "",
     name: "",
     desc: "",
     startTime: "",
     endTime: "",
-    consumed: "",
+    consumed: dropdownOptions[0]?.label,
     generated: "",
   });
   const dispatch = useAppDispatch();
   const activities = useAppSelector((state) => state.prov.activities);
+  const entities = useAppSelector((state: any) => state.prov.entities);
+
+  useEffect(() => {
+    // Map entities to dropdown options format
+    if (entities && entities.length > 0) {
+      const options = entities.map((entity: any) => ({
+        label: entity.name, // Assuming 'name' is the field you want to show in the dropdown
+        value: entity.id, // Assuming 'id' is the unique identifier
+      }));
+      setDropdownOptions([{ label: "Please select", value: "" }, ...options]);
+    }
+  }, [entities]);
 
   const handleChange = (
     e:
@@ -31,6 +47,13 @@ export default function AddActivityNew() {
     }));
   };
 
+  const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      consumed: e.target.value, // Set the value for type from Dropdown
+    }));
+  };
+
   useEffect(() => {
     setFormData((prevData: any) => ({
       ...prevData,
@@ -38,14 +61,6 @@ export default function AddActivityNew() {
       id: generateUniqueId(),
     }));
   }, []);
-
-  // useEffect(() => {
-  //   const rEntities = sessionStorage.getItem("entities");
-  //   if (rEntities) {
-  //     const parsedEntities = JSON.parse(rEntities);
-  //     dispatch(addEntity(parsedEntities));
-  //   }
-  // }, []);
 
   useEffect(() => {
     // If you need to initialize formData based on existing entities:
@@ -59,41 +74,43 @@ export default function AddActivityNew() {
     return `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   };
 
-  const handleSave = () => {
-    dispatch(
-      addActivity({
-        id: formData.id,
-        name: formData.name,
-        desc: formData.desc,
-        startTime: formData.startTime,
-        endTime: formData.endTime,
-        consumed: formData.consumed,
-        generated: formData.generated,
-      })
-    );
-    toast.success("Saved successfully!");
+  const handleBack = () => {
+    console.log("Back");
   };
 
-  const handleSaveAndNext = () => {
-    dispatch(
-      addActivity({
-        id: formData.id,
-        name: formData.name,
-        desc: formData.desc,
-        startTime: formData.startTime,
-        endTime: formData.endTime,
-        consumed: formData.consumed,
-        generated: formData.generated,
-      })
-    );
-    toast.success("Activity saved successfully!");
-    dispatch(incrementMaxStep());
+  const handleSaveAndNext = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    if (
+      !formData.id ||
+      !formData.name ||
+      !formData.desc ||
+      !formData.startTime ||
+      !formData.endTime ||
+      formData.consumed === "Please Select" ||
+      !formData.consumed ||
+      !formData.generated
+    ) {
+      toast.error("Please fill out all the required fields");
+    } else {
+      dispatch(
+        addActivity({
+          id: formData.id,
+          name: formData.name,
+          desc: formData.desc,
+          startTime: formData.startTime,
+          endTime: formData.endTime,
+          consumed: formData.consumed,
+          generated: formData.generated,
+        })
+      );
+      toast.success("Activity saved successfully!");
+      dispatch(incrementMaxStep());
+    }
   };
-
   return (
     <div className="w-full basis-1/2">
       <h2 className="text-2xl font-semibold">Add Activity</h2>
-      <form onSubmit={(e) => e.preventDefault()} className="pt-4">
+      <form onSubmit={handleSaveAndNext} className="pt-4">
         <div className="">
           <TextInput
             label="ID"
@@ -103,6 +120,7 @@ export default function AddActivityNew() {
             placeholder="ID"
             helperText={"Unique ID like ORCID, ROR"}
             required={true}
+            error={!formData.id}
           />
         </div>
         <div className="">
@@ -114,6 +132,7 @@ export default function AddActivityNew() {
             placeholder="Name"
             helperText={"Name of activity"}
             required={true}
+            error={!formData.name}
           />
         </div>
         <div className="">
@@ -125,6 +144,7 @@ export default function AddActivityNew() {
             placeholder="Description"
             helperText={"Desceription of activity like what is about"}
             required={true}
+            error={!formData.desc}
           />
         </div>
         <div className="">
@@ -137,6 +157,7 @@ export default function AddActivityNew() {
             placeholder="dd/mm/yyyy"
             helperText={"Start time of activity"}
             required={true}
+            error={!formData.startTime}
           />
         </div>
         <div className="">
@@ -149,17 +170,18 @@ export default function AddActivityNew() {
             placeholder="dd/mm/yyyy"
             helperText={"End time of activity"}
             required={true}
+            error={!formData.endTime}
           />
         </div>
         <div className="">
-          <TextInput
+          <Dropdown
             label="Consumed"
             id="consumed"
             value={formData.consumed}
-            onChange={handleChange}
-            placeholder="Consumed entity"
+            onChange={handleDropdownChange}
+            options={dropdownOptions}
             helperText={"Consumed some or whole part of entity"}
-            required={true}
+            error={formData.consumed === "Please Select" || !formData.consumed}
           />
         </div>
         <div className="">
@@ -171,17 +193,18 @@ export default function AddActivityNew() {
             placeholder="Generated entity"
             helperText={"Generated some form of entity"}
             required={true}
+            error={!formData.generated}
           />
         </div>
         <div className="flex gap-10">
           <Button
-            text="Save"
+            text="Back"
             rounded="rounded-full"
             block
             type="outlined"
             size="sm"
             onClick={() => {
-              handleSave();
+              handleBack();
             }}
           />
           <Button
@@ -190,9 +213,7 @@ export default function AddActivityNew() {
             block
             type="primary"
             size="sm"
-            onClick={() => {
-              handleSaveAndNext();
-            }}
+            buttonType="submit"
           />
         </div>
       </form>

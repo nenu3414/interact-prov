@@ -5,11 +5,17 @@ import { toast } from "react-toastify";
 import { IAgent, addAgent } from "../../redux/reducers/provSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/useRedux";
 import { incrementMaxStep } from "../../redux/reducers/stepSlice";
+import Dropdown from "../Common/Dropdown";
 
 export default function AddAgentNew() {
+  const options = [
+    { label: "Person", value: "person" },
+    { label: "Organization", value: "organization" },
+    { label: "Software", value: "software" },
+  ];
   const [formData, setFormData] = useState<IAgent>({
     id: "",
-    type: "",
+    type: options[0].value,
     name: "",
     desc: "",
   });
@@ -28,6 +34,13 @@ export default function AddAgentNew() {
     }));
   };
 
+  const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      type: e.target.value, // Set the value for type from Dropdown
+    }));
+  };
+
   useEffect(() => {
     setFormData((prevData: any) => ({
       ...prevData,
@@ -35,14 +48,6 @@ export default function AddAgentNew() {
       id: generateUniqueId(),
     }));
   }, []);
-
-  // useEffect(() => {
-  //   const rEntities = sessionStorage.getItem("entities");
-  //   if (rEntities) {
-  //     const parsedEntities = JSON.parse(rEntities);
-  //     dispatch(addEntity(parsedEntities));
-  //   }
-  // }, []);
 
   useEffect(() => {
     // If you need to initialize formData based on existing entities:
@@ -97,14 +102,14 @@ export default function AddAgentNew() {
           />
         </div>
         <div className="">
-          <TextInput
+          <Dropdown
             label="Type"
             id="type"
             value={formData.type}
-            onChange={handleChange}
-            placeholder="Type"
-            helperText={"Type of agent"}
-            required={true}
+            onChange={handleDropdownChange}
+            options={options}
+            helperText={"Select the type of agent"}
+            error={!formData.type}
           />
         </div>
         <div className="">
@@ -114,7 +119,7 @@ export default function AddAgentNew() {
             value={formData.name}
             onChange={handleChange}
             placeholder="Name"
-            helperText={"Name of activity"}
+            helperText={`Name of ${formData.type}`}
             required={true}
           />
         </div>
@@ -125,13 +130,19 @@ export default function AddAgentNew() {
             value={formData.desc}
             onChange={handleChange}
             placeholder="Description"
-            helperText={"Desceription of activity like what is about"}
+            helperText={`Desceription of ${formData.type} like ${
+              formData.type === "person"
+                ? "gender, occupation etc."
+                : formData.type === "organization"
+                ? "government, private etc."
+                : "OS, technology etc."
+            }`}
             required={true}
           />
         </div>
         <div className="flex gap-10">
           <Button
-            text="Save"
+            text="Back"
             rounded="rounded-full"
             block
             type="outlined"

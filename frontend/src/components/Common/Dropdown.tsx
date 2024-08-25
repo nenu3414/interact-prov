@@ -1,44 +1,52 @@
 import React from "react";
 import { INFO } from "../../assets/icons";
 
-export default function TextInput({
+interface DropdownProps {
+  label?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: { label: string; value: string }[];
+  id: string;
+  error?: boolean;
+  helperText?: string;
+}
+
+const Dropdown: React.FC<DropdownProps> = ({
   label,
-  placeholder,
   value,
   onChange,
-  type = "text",
+  options,
   id,
   error,
   helperText,
-  required = true,
-  ...props
-}: any) {
+}) => {
   return (
     <div className="flex items-center w-full mb-4">
       {label && (
         <label
           htmlFor={id}
-          className="mr-4 w-1/4 text-sm font-semibold text-gray-700"
+          className="mb-2 mr-4 w-1/4 text-sm font-semibold text-gray-700"
         >
           {label}
         </label>
       )}
-      <div className="flex items-center w-3/4 relative">
-        <input
-          type={type}
+      <div className="flex items-center w-3/4 relative" key={id}>
+        <select
           id={id}
           value={value}
           onChange={onChange}
-          placeholder={placeholder}
-          required={required}
-          autoComplete="off"
-          className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition w-full ${
+          className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition w-full cursor-pointer ${
             error
-              ? "border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500"
+              ? "border-red-500 focus:border-red-500 focus:ring-red-500"
               : "border-gray-300 focus:border-blue-500"
           }`}
-          {...props}
-        />
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
         {helperText && (
           <div className="relative ml-2 flex items-center group">
             <img src={INFO} alt="info" className="cursor-pointer" />
@@ -50,4 +58,6 @@ export default function TextInput({
       </div>
     </div>
   );
-}
+};
+
+export default Dropdown;

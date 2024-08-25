@@ -12,6 +12,7 @@ interface Props {
   fontSize?: number;
   id?: string;
   rounded?: string;
+  buttonType?: "submit" | "reset" | "button";
 }
 
 export function Button({
@@ -26,6 +27,7 @@ export function Button({
   fontSize = 14,
   id,
   rounded,
+  buttonType,
 }: Props) {
   const width = block ? "w-full" : "w-max";
   const height =
@@ -43,6 +45,7 @@ export function Button({
     return (
       <button
         id={id}
+        type={buttonType}
         disabled={disabled}
         onClick={() => onClick && onClick()}
         style={{ fontSize: fontSize }}
@@ -63,6 +66,7 @@ export function Button({
     return (
       <button
         id={id}
+        type={buttonType}
         disabled={disabled}
         onClick={() => onClick && onClick()}
         style={{ fontSize: fontSize }}

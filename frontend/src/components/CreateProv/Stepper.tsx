@@ -23,7 +23,9 @@ export default function Stepper() {
     <div className="flex flex-col gap-4">
       {steps?.map((step, i) => (
         <div
-          className="flex items-center gap-2 cursor-pointer"
+          className={`flex items-center gap-2 ${
+            i <= maxStep ? "cursor-pointer" : "cursor-not-allowed"
+          }`}
           key={i}
           onClick={() => handleStepClick(i)}
         >

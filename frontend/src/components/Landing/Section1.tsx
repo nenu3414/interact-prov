@@ -10,13 +10,13 @@ export default function Section1() {
       </div>
       <div className="w-4/5 flex flex-col items-center justify-center">
         <h1 className="w-3/5 text-5xl font-extrabold">
-          Welcome to PROV-Interact : Build, share, and validate Provenance
-          Graphs
+          Welcome to PROV-Interact : Build, Visualize, and Export provenance
+          documents
         </h1>
         <p className="w-3/5 mt-5">
-          Our tool is designed to be user-friendly and intuitive, allowing you
-          to create, view, validate, and bulk upload provenance graphs with
-          ease. Need help? We've got you covered.
+          Our form-based tool is designed to be user-friendly and intuitive,
+          allowing you to create, view graph, and export provenance documents
+          with ease. Need help? We've got you covered.
         </p>
         <div className="w-3/5 mt-5">
           <div className=" w-11/12 flex gap-3">

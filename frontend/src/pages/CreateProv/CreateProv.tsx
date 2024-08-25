@@ -10,6 +10,7 @@ import Stepper from "../../components/CreateProv/Stepper";
 import AddEntityNew from "../../components/CreateProv/AddEntityNew";
 import AddActivityNew from "../../components/CreateProv/AddActivityNew";
 import AddAgentNew from "../../components/CreateProv/AddAgentNew";
+import AddRelationshipNew from "../../components/CreateProv/AddRelationshipNew";
 
 export default function CreateProv() {
   const [isOverlayOpen, setIsOverlayOpen] = useState(true);
@@ -118,7 +119,7 @@ export default function CreateProv() {
               ) : currentStep === 2 ? (
                 <AddAgentNew /> //agent
               ) : currentStep === 3 ? (
-                <AddActivityNew /> //relationship
+                <AddRelationshipNew /> //relationship
               ) : null}
             </div>
           </div>

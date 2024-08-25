@@ -4,12 +4,17 @@ import { Button } from "../Common/Button";
 import { toast } from "react-toastify";
 import { IEntity, addEntity } from "../../redux/reducers/provSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/useRedux";
-import { incrementMaxStep } from "../../redux/reducers/stepSlice";
+import { incrementMaxStep, setStep } from "../../redux/reducers/stepSlice";
+import Dropdown from "../Common/Dropdown";
 
 export default function AddEntityNew() {
+  const options = [
+    { label: "Dataset", value: "dataset" },
+    { label: "File", value: "file" },
+  ];
   const [formData, setFormData] = useState<IEntity>({
     id: "",
-    type: "",
+    type: options[0].value,
     name: "",
     desc: "",
     date: "",
@@ -28,6 +33,13 @@ export default function AddEntityNew() {
     setFormData((prevData: any) => ({
       ...prevData,
       [id]: value,
+    }));
+  };
+
+  const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      type: e.target.value, // Set the value for type from Dropdown
     }));
   };
 
@@ -59,41 +71,39 @@ export default function AddEntityNew() {
     return `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   };
 
-  const handleSave = () => {
-    dispatch(
-      addEntity({
-        id: formData.id,
-        type: formData.type,
-        name: formData.name,
-        desc: formData.desc,
-        date: formData.date,
-        location: formData.location,
-        version: formData.version,
-      })
-    );
-    toast.success("Saved successfully!");
-  };
-
-  const handleSaveAndNext = () => {
-    dispatch(
-      addEntity({
-        id: formData.id,
-        type: formData.type,
-        name: formData.name,
-        desc: formData.desc,
-        date: formData.date,
-        location: formData.location,
-        version: formData.version,
-      })
-    );
-    toast.success("Entity saved successfully!");
-    dispatch(incrementMaxStep());
+  const handleSaveAndNext = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    if (
+      !formData.id ||
+      !formData.type ||
+      !formData.name ||
+      !formData.desc ||
+      !formData.date ||
+      !formData.location ||
+      !formData.version
+    ) {
+      toast.error("Please fill out all the required fields");
+    } else {
+      dispatch(
+        addEntity({
+          id: formData.id,
+          type: formData.type,
+          name: formData.name,
+          desc: formData.desc,
+          date: formData.date,
+          location: formData.location,
+          version: formData.version,
+        })
+      );
+      toast.success("Entity saved successfully!");
+      dispatch(incrementMaxStep());
+    }
   };
 
   return (
     <div className="w-full basis-1/2">
       <h2 className="text-2xl font-semibold">Add Entity</h2>
-      <form onSubmit={(e) => e.preventDefault()} className="pt-4">
+      <form onSubmit={handleSaveAndNext} className="pt-4">
         <div className="">
           <TextInput
             label="ID"
@@ -103,17 +113,18 @@ export default function AddEntityNew() {
             placeholder="ID"
             helperText={"Unique ID like ORCID, ROR"}
             required={true}
+            error={!formData.id}
           />
         </div>
         <div className="">
-          <TextInput
+          <Dropdown
             label="Type"
             id="type"
             value={formData.type}
-            onChange={handleChange}
-            placeholder="Type"
-            helperText={"Type of Entity"}
-            required={true}
+            onChange={handleDropdownChange}
+            options={options}
+            helperText="Select the type of entity"
+            error={!formData.type}
           />
         </div>
         <div className="">
@@ -125,6 +136,7 @@ export default function AddEntityNew() {
             placeholder="Name"
             helperText={"Name of dataset"}
             required={true}
+            error={!formData.name}
           />
         </div>
         <div className="">
@@ -136,6 +148,7 @@ export default function AddEntityNew() {
             placeholder="Description"
             helperText={"Desceription of dataset like what is about"}
             required={true}
+            error={!formData.desc}
           />
         </div>
         <div className="">
@@ -147,6 +160,7 @@ export default function AddEntityNew() {
             onChange={handleChange}
             helperText={"Date on which this dataset was collected/created"}
             required={true}
+            error={!formData.date}
           />
         </div>
         <div className="">
@@ -158,6 +172,7 @@ export default function AddEntityNew() {
             placeholder="Location"
             helperText={"Where was collected/created"}
             required={true}
+            error={!formData.location}
           />
         </div>
         <div className="">
@@ -169,29 +184,20 @@ export default function AddEntityNew() {
             placeholder="Version"
             helperText={"version of dataset"}
             required={true}
+            error={!formData.version}
           />
         </div>
-        <div className="flex gap-10">
-          <Button
-            text="Save"
-            rounded="rounded-full"
-            block
-            type="outlined"
-            size="sm"
-            onClick={() => {
-              handleSave();
-            }}
-          />
-          <Button
-            text="Save & Next"
-            rounded="rounded-full"
-            block
-            type="primary"
-            size="sm"
-            onClick={() => {
-              handleSaveAndNext();
-            }}
-          />
+        <div className="w-full flex justify-center">
+          <div className="flex w-1/2">
+            <Button
+              text="Save & Next"
+              rounded="rounded-full"
+              block
+              type="primary"
+              size="sm"
+              buttonType="submit"
+            />
+          </div>
         </div>
       </form>
     </div>
