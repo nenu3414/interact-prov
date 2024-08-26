@@ -14,10 +14,10 @@ export default function AddAgentNew() {
     { label: "Software", value: "software" },
   ];
   const [formData, setFormData] = useState<IAgent>({
-    id: "",
-    type: options[0].value,
+    agent_id: "",
+    agent_type: options[0].value,
     name: "",
-    desc: "",
+    description: "",
   });
   const dispatch = useAppDispatch();
   const agents = useAppSelector((state) => state.prov.agents);
@@ -45,7 +45,7 @@ export default function AddAgentNew() {
     setFormData((prevData: any) => ({
       ...prevData,
       // id: crypto.randomUUID(),
-      id: generateUniqueId(),
+      agent_id: generateUniqueId(),
     }));
   }, []);
 
@@ -58,16 +58,16 @@ export default function AddAgentNew() {
   }, [agents]);
 
   const generateUniqueId = () => {
-    return `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    return `prov-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   };
 
   const handleSave = () => {
     dispatch(
       addAgent({
-        id: formData.id,
-        type: formData.type,
+        agent_id: formData.agent_id,
+        agent_type: formData.agent_type,
         name: formData.name,
-        desc: formData.desc,
+        description: formData.description,
       })
     );
     toast.success("Saved successfully!");
@@ -76,10 +76,10 @@ export default function AddAgentNew() {
   const handleSaveAndNext = () => {
     dispatch(
       addAgent({
-        id: formData.id,
-        type: formData.type,
+        agent_id: formData.agent_id,
+        agent_type: formData.agent_type,
         name: formData.name,
-        desc: formData.desc,
+        description: formData.description,
       })
     );
     toast.success("Agent saved successfully!");
@@ -94,22 +94,23 @@ export default function AddAgentNew() {
           <TextInput
             label="ID"
             id="id"
-            value={formData.id}
+            value={formData.agent_id}
             onChange={handleChange}
             placeholder="ID"
             helperText={"Unique ID like ORCID, ROR"}
             required={true}
+            error={!formData.agent_id}
           />
         </div>
         <div className="">
           <Dropdown
             label="Type"
             id="type"
-            value={formData.type}
+            value={formData.agent_type}
             onChange={handleDropdownChange}
             options={options}
             helperText={"Select the type of agent"}
-            error={!formData.type}
+            error={!formData.agent_type}
           />
         </div>
         <div className="">
@@ -119,25 +120,27 @@ export default function AddAgentNew() {
             value={formData.name}
             onChange={handleChange}
             placeholder="Name"
-            helperText={`Name of ${formData.type}`}
+            helperText={`Name of ${formData.agent_type}`}
             required={true}
+            error={!formData.name}
           />
         </div>
         <div className="">
           <TextInput
             label="Description"
-            id="desc"
-            value={formData.desc}
+            id="description"
+            value={formData.description}
             onChange={handleChange}
             placeholder="Description"
-            helperText={`Desceription of ${formData.type} like ${
-              formData.type === "person"
+            helperText={`Desceription of ${formData.agent_type} like ${
+              formData.agent_type === "person"
                 ? "gender, occupation etc."
-                : formData.type === "organization"
+                : formData.agent_type === "organization"
                 ? "government, private etc."
                 : "OS, technology etc."
             }`}
             required={true}
+            error={!formData.description}
           />
         </div>
         <div className="flex gap-10">

@@ -49,8 +49,10 @@ export function Button({
         disabled={disabled}
         onClick={() => onClick && onClick()}
         style={{ fontSize: fontSize }}
-        className={`${width} ${height} px-4 font-semibold ${rounded} text-center bg-blue-500 text-white border cursor-pointer transition-all flex items-center justify-center ${
-          disabled ? "opacity-70" : "opacity-100"
+        className={`${width} ${height} px-4 font-semibold ${rounded} text-center bg-blue-500 text-white border transition-all flex items-center justify-center ${
+          disabled
+            ? "opacity-50 cursor-not-allowed"
+            : "opacity-100 cursor-pointer"
         } ${className}`}
       >
         {loading ? (

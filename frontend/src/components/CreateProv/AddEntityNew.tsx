@@ -13,10 +13,10 @@ export default function AddEntityNew() {
     { label: "File", value: "file" },
   ];
   const [formData, setFormData] = useState<IEntity>({
-    id: "",
-    type: options[0].value,
+    entity_id: "",
+    entity_type: options[0].value,
     name: "",
-    desc: "",
+    description: "",
     date: "",
     location: "",
     version: "",
@@ -47,7 +47,7 @@ export default function AddEntityNew() {
     setFormData((prevData: any) => ({
       ...prevData,
       // id: crypto.randomUUID(),
-      id: generateUniqueId(),
+      entity_id: generateUniqueId(),
     }));
   }, []);
 
@@ -68,16 +68,16 @@ export default function AddEntityNew() {
   }, [entities]);
 
   const generateUniqueId = () => {
-    return `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    return `prov-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   };
 
   const handleSaveAndNext = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (
-      !formData.id ||
-      !formData.type ||
+      !formData.entity_id ||
+      !formData.entity_type ||
       !formData.name ||
-      !formData.desc ||
+      !formData.description ||
       !formData.date ||
       !formData.location ||
       !formData.version
@@ -86,10 +86,10 @@ export default function AddEntityNew() {
     } else {
       dispatch(
         addEntity({
-          id: formData.id,
-          type: formData.type,
+          entity_id: formData.entity_id,
+          entity_type: formData.entity_type,
           name: formData.name,
-          desc: formData.desc,
+          description: formData.description,
           date: formData.date,
           location: formData.location,
           version: formData.version,
@@ -108,23 +108,23 @@ export default function AddEntityNew() {
           <TextInput
             label="ID"
             id="id"
-            value={formData.id}
+            value={formData.entity_id}
             onChange={handleChange}
             placeholder="ID"
             helperText={"Unique ID like ORCID, ROR"}
             required={true}
-            error={!formData.id}
+            error={!formData.entity_id}
           />
         </div>
         <div className="">
           <Dropdown
             label="Type"
             id="type"
-            value={formData.type}
+            value={formData.entity_type}
             onChange={handleDropdownChange}
             options={options}
             helperText="Select the type of entity"
-            error={!formData.type}
+            error={!formData.entity_type}
           />
         </div>
         <div className="">
@@ -142,13 +142,13 @@ export default function AddEntityNew() {
         <div className="">
           <TextInput
             label="Description"
-            id="desc"
-            value={formData.desc}
+            id="description"
+            value={formData.description}
             onChange={handleChange}
             placeholder="Description"
-            helperText={"Desceription of dataset like what is about"}
+            helperText={"Where was collected/created"}
             required={true}
-            error={!formData.desc}
+            error={!formData.description}
           />
         </div>
         <div className="">

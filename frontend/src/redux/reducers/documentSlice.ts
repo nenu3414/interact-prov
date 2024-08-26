@@ -14,15 +14,21 @@ const initialState: initialState = {
 
 const documentSlice = createSlice({
   name: "doc",
-  initialState: initialState,
+  initialState,
   reducers: {
     saveDocument: (state, action) => {
       sessionStorage.setItem("doc", JSON.stringify(action.payload));
       return action.payload;
     },
+    clearDoc(state) {
+      state.documentName = "";
+      state.author = "";
+      state.isPublic = false;
+
+      sessionStorage.removeItem("doc");
+    },
   },
-  extraReducers(builder) {},
 });
 
-export const { saveDocument } = documentSlice.actions;
+export const { saveDocument, clearDoc } = documentSlice.actions;
 export default documentSlice.reducer;

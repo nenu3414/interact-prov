@@ -41,9 +41,15 @@ const stepSlice = createSlice({
         sessionStorage.setItem("step", JSON.stringify(state));
       }
     },
+    clearStep(state) {
+      state.currentStep = 0;
+      state.maxStep = 0;
+
+      sessionStorage.removeItem("step");
+    },
   },
 });
 
-export const { setStep, incrementMaxStep } = stepSlice.actions;
+export const { setStep, incrementMaxStep, clearStep } = stepSlice.actions;
 
 export default stepSlice.reducer;

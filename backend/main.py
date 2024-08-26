@@ -6,21 +6,32 @@ from provstore.api import Api
 from prov.dot import prov_to_dot
 import os
 import pydot
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import RedirectResponse, JSONResponse, PlainTextResponse
 import requests
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-
+from fastapi.middleware.cors import CORSMiddleware
+from io import BytesIO
+import base64
+from urllib.parse import quote
 
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 load_dotenv()
 
 PROVSTORE_API_KEY = os.getenv("PROVSTORE_API_KEY")
 PROVSTORE_API_URL = os.getenv("PROVSTORE_API_URL")
-USERID = os.getenv("USERNAME")
-
+PROVSTORE_USERNAME = os.getenv("PROVSTORE_USERNAME")
 # Define data models
 class Entity(BaseModel):
     entity_id: str
@@ -49,20 +60,27 @@ class Agent(BaseModel):
 class Relationship(BaseModel):
     relationship_id: str
     subject: str
-    relationship_type: str
+    relationship: str
     object: str
 
 class Document(BaseModel):
-    document_name: str
+    documentName: str
     author: str
-    is_public: bool
+    isPublic: bool
 
 class ProvenanceRequest(BaseModel):
     entities: List[Entity]
     activities: List[Activity]
     agents: List[Agent]
     relationships: List[Relationship]
-    # documents: List[Document]
+    documents: Document
+
+class ExportRequest(BaseModel):
+    entities: List[Entity]
+    activities: List[Activity]
+    agents: List[Agent]
+    relationships: List[Relationship]
+    docFormat: str
 
 @app.get("/")
 async def root():
@@ -83,11 +101,11 @@ async def get_public_docs():
             "order_by": "-created_at"
         }
 
-        response = requests.get(PROVSTORE_API_URL, params=params)
+        response = requests.get(f"{PROVSTORE_API_URL}documents", params=params)
 
         if response.status_code == 200:
             documents = response.json()
-            return {"public_documents": documents}
+            return documents
         else:
             raise HTTPException(status_code=response.status_code, detail="Failed to retrieve public documents")
 
@@ -140,21 +158,29 @@ async def create_provenance_graph(provenance: ProvenanceRequest):
     
     # Add relationships
     for relationship in provenance.relationships:
-        if relationship.relationship_type == "used":
+        if relationship.relationship == "used":
             d1.used(f"var:{relationship.object}", f"var:{relationship.subject}")
-        elif relationship.relationship_type == "hadMember":
+        elif relationship.relationship == "hadMember":
             d1.hadMember(f"var:{relationship.subject}", f"var:{relationship.object}")
 
-    # provn_output = d1.get_provn()
+    if provenance.documents.isPublic:
+        api = Api(base_url=PROVSTORE_API_URL, username=PROVSTORE_USERNAME, api_key=PROVSTORE_API_KEY)
+        provstore_document = api.document.create(d1, name=provenance.documents.documentName, public=True)
+
+        provstore_id = provstore_document.id
 
     # # Return the PROV-N as a plain text response
+    # provn_output = d1.get_provn()
     # return {"provn": provn_output}
     
     # Convert the PROV document to a DOT format using prov_to_dot
     dot = prov_to_dot(d1)
 
+    # Set image resolution (DPI)
+    dot.set_graph_defaults(dpi=600, size="15, 20!")
+
     # Get the DOT source as a string
-    dot_source = dot.to_string()
+    # dot_source = dot.to_string()
 
     # Render the graph to a file (PNG format)
     # output_file_path = "prov_graph.png"
@@ -162,10 +188,22 @@ async def create_provenance_graph(provenance: ProvenanceRequest):
 
     # Return the PNG file as a response
     # return FileResponse(output_file_path)
-    return {"dot": dot_source}
+    # return {"dot": dot_source}
+
+    # Generate the PNG image as bytes using create_png()
+    png_data = dot.create_png()
+
+    # Convert the PNG bytes to base64
+    img_base64 = base64.b64encode(png_data).decode('utf-8')
+
+    # Return the base64 string as a response
+    if provenance.documents.isPublic:
+        return JSONResponse(content={"image": img_base64, "id": provstore_id})
+    else:
+        return JSONResponse(content={"image": img_base64})
 
 @app.post("/prov/export-prov")
-async def export_provenance_documet(provenance: ProvenanceRequest):
+async def export_provenance_documet(provenance: ExportRequest):
     # Create a PROV document
     d1 = ProvDocument()
 
@@ -180,9 +218,9 @@ async def export_provenance_documet(provenance: ProvenanceRequest):
 
     # Add entities
     for entity in provenance.entities:
-        eId = f"var:{entity.entity_id}"
+        eId = f"var:{quote(entity.entity_id)}"
         d1.entity(eId, {
-            "prov:type": f"tmpl:{entity.entity_type}",
+            "prov:type": f"tmpl:{quote(entity.entity_type)}",
             "foaf:name": entity.name,
             "prov:description": entity.description,
             "xsd:date": entity.date,
@@ -192,40 +230,39 @@ async def export_provenance_documet(provenance: ProvenanceRequest):
     
     # Add activities
     for activity in provenance.activities:
-        aId = f"var:{activity.activity_id}"
+        aId = f"var:{quote(activity.activity_id)}"
         d1.activity(aId, activity.start_time, activity.end_time, {
             "foaf:name": activity.name,
             "prov:description": activity.description
         })
-        d1.wasGeneratedBy(f"tmpl:{activity.generated}", aId)
+        d1.wasGeneratedBy(f"tmpl:{quote(activity.generated)}", aId)
     
     # Add agents
     for agent in provenance.agents:
-        agId = f"var:{agent.agent_id}"
+        agId = f"var:{quote(agent.agent_id)}"
         d1.agent(agId, {
-            "prov:type": f"foaf:{agent.agent_type}",
+            "prov:type": f"foaf:{quote(agent.agent_type)}",
             "foaf:name": agent.name,
             "prov:description": agent.description
         })
     
     # Add relationships
     for relationship in provenance.relationships:
-        if relationship.relationship_type == "used":
-            d1.used(f"var:{relationship.object}", f"var:{relationship.subject}")
-        elif relationship.relationship_type == "hadMember":
-            d1.hadMember(f"var:{relationship.subject}", f"var:{relationship.object}")
-
-    provn_output = d1.get_provn()
-
-    # Return the PROV-N as a plain text response
-    return {"provn": provn_output}
+        if relationship.relationship == "used":
+            d1.used(f"var:{quote(relationship.object)}", f"var:{quote(relationship.subject)}")
+        elif relationship.relationship == "hadMember":
+            d1.hadMember(f"var:{quote(relationship.subject)}", f"var:{quote(relationship.object)}")
     
-    # # Convert the PROV document to a DOT format using prov_to_dot
-    # dot = prov_to_dot(d1)
+    # Determine the format to return
+    if provenance.docFormat == "provn":
+        output = d1.get_provn()
+    elif provenance.docFormat == "provJson":
+        output = d1.serialize(format='json')
+    elif provenance.docFormat == "provXml":
+        output = d1.serialize(format='xml')
+    elif provenance.docFormat == "provRdf":
+        output = d1.serialize(format='rdf', rdf_format='ttl')
+    else:
+        raise HTTPException(status_code=400, detail="Invalid format")
 
-    # # Render the graph to a file (PNG format)
-    # output_file_path = "prov_graph.png"
-    # dot.write_png(output_file_path)
-
-    # # Return the PNG file as a response
-    # return FileResponse(output_file_path)  
+    return PlainTextResponse(content=output, media_type="application/octet-stream")

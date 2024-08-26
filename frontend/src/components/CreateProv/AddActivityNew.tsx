@@ -12,11 +12,11 @@ export default function AddActivityNew() {
     { label: "Please Select", value: "" },
   ]);
   const [formData, setFormData] = useState<IActivity>({
-    id: "",
+    activity_id: "",
     name: "",
-    desc: "",
-    startTime: "",
-    endTime: "",
+    description: "",
+    start_time: "",
+    end_time: "",
     consumed: dropdownOptions[0]?.label,
     generated: "",
   });
@@ -58,7 +58,7 @@ export default function AddActivityNew() {
     setFormData((prevData: any) => ({
       ...prevData,
       // id: crypto.randomUUID(),
-      id: generateUniqueId(),
+      activity_id: generateUniqueId(),
     }));
   }, []);
 
@@ -71,7 +71,7 @@ export default function AddActivityNew() {
   }, [activities]);
 
   const generateUniqueId = () => {
-    return `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    return `prov-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   };
 
   const handleBack = () => {
@@ -81,11 +81,11 @@ export default function AddActivityNew() {
   const handleSaveAndNext = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (
-      !formData.id ||
+      !formData.activity_id ||
       !formData.name ||
-      !formData.desc ||
-      !formData.startTime ||
-      !formData.endTime ||
+      !formData.description ||
+      !formData.start_time ||
+      !formData.end_time ||
       formData.consumed === "Please Select" ||
       !formData.consumed ||
       !formData.generated
@@ -94,11 +94,11 @@ export default function AddActivityNew() {
     } else {
       dispatch(
         addActivity({
-          id: formData.id,
+          activity_id: formData.activity_id,
           name: formData.name,
-          desc: formData.desc,
-          startTime: formData.startTime,
-          endTime: formData.endTime,
+          description: formData.description,
+          start_time: formData.start_time,
+          end_time: formData.end_time,
           consumed: formData.consumed,
           generated: formData.generated,
         })
@@ -115,12 +115,12 @@ export default function AddActivityNew() {
           <TextInput
             label="ID"
             id="id"
-            value={formData.id}
+            value={formData.activity_id}
             onChange={handleChange}
             placeholder="ID"
             helperText={"Unique ID like ORCID, ROR"}
             required={true}
-            error={!formData.id}
+            error={!formData.activity_id}
           />
         </div>
         <div className="">
@@ -138,39 +138,39 @@ export default function AddActivityNew() {
         <div className="">
           <TextInput
             label="Description"
-            id="desc"
-            value={formData.desc}
+            id="description"
+            value={formData.description}
             onChange={handleChange}
             placeholder="Description"
             helperText={"Desceription of activity like what is about"}
             required={true}
-            error={!formData.desc}
+            error={!formData.description}
           />
         </div>
         <div className="">
           <TextInput
             type="date"
             label="Start Time"
-            id="startTime"
-            value={formData.startTime}
+            id="start_time"
+            value={formData.start_time}
             onChange={handleChange}
             placeholder="dd/mm/yyyy"
             helperText={"Start time of activity"}
             required={true}
-            error={!formData.startTime}
+            error={!formData.start_time}
           />
         </div>
         <div className="">
           <TextInput
             type="date"
             label="End Time"
-            id="endTime"
-            value={formData.endTime}
+            id="end_time"
+            value={formData.end_time}
             onChange={handleChange}
             placeholder="dd/mm/yyyy"
             helperText={"End time of activity"}
             required={true}
-            error={!formData.endTime}
+            error={!formData.end_time}
           />
         </div>
         <div className="">

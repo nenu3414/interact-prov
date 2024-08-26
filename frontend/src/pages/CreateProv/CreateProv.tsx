@@ -11,6 +11,8 @@ import AddEntityNew from "../../components/CreateProv/AddEntityNew";
 import AddActivityNew from "../../components/CreateProv/AddActivityNew";
 import AddAgentNew from "../../components/CreateProv/AddAgentNew";
 import AddRelationshipNew from "../../components/CreateProv/AddRelationshipNew";
+import Visualize from "../../components/CreateProv/Visualize";
+import Export from "../../components/CreateProv/Export";
 
 export default function CreateProv() {
   const [isOverlayOpen, setIsOverlayOpen] = useState(true);
@@ -120,6 +122,10 @@ export default function CreateProv() {
                 <AddAgentNew /> //agent
               ) : currentStep === 3 ? (
                 <AddRelationshipNew /> //relationship
+              ) : currentStep === 4 ? (
+                <Visualize /> //visualization
+              ) : currentStep === 5 ? (
+                <Export />
               ) : null}
             </div>
           </div>

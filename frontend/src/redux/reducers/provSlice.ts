@@ -1,35 +1,34 @@
-// src/redux/slices/userSlice.js
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 export interface IEntity {
-  id: string;
-  type: string;
+  entity_id: string;
+  entity_type: string;
   name: string;
-  desc: string;
+  description: string;
   date: string;
   location: string;
   version: string;
 }
 
 export interface IActivity {
-  id: string;
+  activity_id: string;
   name: string;
-  desc: string;
-  startTime: string;
-  endTime: string;
+  description: string;
+  start_time: string;
+  end_time: string;
   consumed: string;
   generated: string;
 }
 
 export interface IAgent {
-  id: string;
-  type: string;
+  agent_id: string;
+  agent_type: string;
   name: string;
-  desc: string;
+  description: string;
 }
 
 export interface IRelationship {
-  id: string;
+  relationship_id: string;
   subject: string;
   relationship: string;
   object: string;
@@ -61,7 +60,7 @@ const provSlice = createSlice({
     addEntity(state, action: PayloadAction<IEntity>) {
       // Check if the entity already exists by id
       const existingEntityIndex = state.entities.findIndex(
-        (entity) => entity.id === action.payload.id
+        (entity) => entity.entity_id === action.payload.entity_id
       );
 
       if (existingEntityIndex >= 0) {
@@ -77,7 +76,7 @@ const provSlice = createSlice({
     addActivity(state, action: PayloadAction<IActivity>) {
       // Check if the activity already exists by id
       const existingActivityIndex = state.activities.findIndex(
-        (activity) => activity.id === action.payload.id
+        (activity) => activity.activity_id === action.payload.activity_id
       );
 
       if (existingActivityIndex >= 0) {
@@ -93,7 +92,7 @@ const provSlice = createSlice({
     addAgent(state, action: PayloadAction<IAgent>) {
       // Check if the agent already exists by id
       const existingAgentIndex = state.agents.findIndex(
-        (agent) => agent.id === action.payload.id
+        (agent) => agent.agent_id === action.payload.agent_id
       );
 
       if (existingAgentIndex >= 0) {
@@ -122,7 +121,8 @@ const provSlice = createSlice({
 
       action.payload.forEach((newRelationship) => {
         const existingRelationshipIndex = state.relationships.findIndex(
-          (relationship) => relationship.id === newRelationship.id
+          (relationship) =>
+            relationship.relationship_id === newRelationship.relationship_id
         );
 
         if (existingRelationshipIndex >= 0) {
@@ -144,6 +144,11 @@ const provSlice = createSlice({
       state.activities = [];
       state.agents = [];
       state.relationships = [];
+
+      sessionStorage.removeItem("entities");
+      sessionStorage.removeItem("activities");
+      sessionStorage.removeItem("agents");
+      sessionStorage.removeItem("relationships");
     },
   },
 });

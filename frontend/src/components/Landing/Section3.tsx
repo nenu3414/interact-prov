@@ -21,14 +21,14 @@ export default function Section3() {
           <img src={FEATURE2} alt="Feature 2" />
           <p className="mt-2 text-sm font-bold">Visualize Provenance Graph</p>
           <p className="w-3/4 mt-2 text-sm text-gray-400">
-            View and traverse Provenance Graphs
+            View Provenance Graphs
           </p>
         </div>
         <div className="border rounded-lg p-2 h-36 w-1/3">
           <img src={FEATURE3} alt="Feature 3" />
           <p className="mt-2 text-sm font-bold">Export Provenance Graph</p>
           <p className="w-3/4 mt-2 text-sm text-gray-400">
-            Export Provenance Graph as images, JSON or other formats
+            Export Provenance Graph document in various formats
           </p>
         </div>
         {/* <div className="border rounded-lg p-2 h-36 w-1/4">
