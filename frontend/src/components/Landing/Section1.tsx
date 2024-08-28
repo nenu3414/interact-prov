@@ -1,6 +1,7 @@
 import React from "react";
 import { LANDING_IMG } from "../../assets/images";
 import { Button } from "../Common/Button";
+import { Link } from "react-router-dom";
 
 export default function Section1() {
   return (
@@ -19,14 +20,16 @@ export default function Section1() {
           with ease. Need help? We've got you covered.
         </p>
         <div className="w-3/5 mt-5">
-          <div className=" w-11/12 flex gap-3">
-            <Button
-              text="Create Provenance Graph"
-              block
-              rounded="rounded-xl"
-              type="primary"
-              size="md"
-            />
+          <div className="w-11/12 flex gap-3">
+            <Link to="/create-prov" className="w-full">
+              <Button
+                text="Create Provenance Graph"
+                block
+                rounded="rounded-xl"
+                type="primary"
+                size="md"
+              />
+            </Link>
             <Button
               text="Learn More"
               block

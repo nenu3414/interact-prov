@@ -13,6 +13,13 @@ export default function TextInput({
   required = true,
   ...props
 }: any) {
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
   return (
     <div className="flex items-center w-full mb-4">
       {label && (
@@ -32,6 +39,7 @@ export default function TextInput({
           placeholder={placeholder}
           required={required}
           autoComplete="off"
+          max={type === "date" ? getTodayDate() : undefined}
           className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition w-full ${
             error
               ? "border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500"

@@ -57,13 +57,13 @@ export default function Visualize() {
       let link = document.createElement("a");
       if (format === "png") {
         link.href = canvas.toDataURL("image/png");
-        link.download = "graph.png";
+        link.download = `${documents.documentName}.png`;
       } else if (format === "jpeg") {
         link.href = canvas.toDataURL("image/jpeg");
-        link.download = "graph.jpeg";
+        link.download = `${documents.documentName}.jpeg`;
       } else if (format === "svg") {
         link.href = `data:image/svg+xml;base64,${imageData}`;
-        link.download = "graph.svg";
+        link.download = `${documents.documentName}.svg`;
       }
       link.click();
     };

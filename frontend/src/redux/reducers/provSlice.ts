@@ -16,8 +16,6 @@ export interface IActivity {
   description: string;
   start_time: string;
   end_time: string;
-  consumed: string;
-  generated: string;
 }
 
 export interface IAgent {
@@ -68,7 +66,7 @@ const provSlice = createSlice({
         state.entities[existingEntityIndex] = action.payload;
       } else {
         // Only add if the entity does not exist
-        state.entities = [action.payload];
+        state.entities.push(action.payload);
       }
       // Store the updated entities in sessionStorage
       sessionStorage.setItem("entities", JSON.stringify(state.entities));
@@ -84,7 +82,7 @@ const provSlice = createSlice({
         state.activities[existingActivityIndex] = action.payload;
       } else {
         // Only add if the activity does not exist
-        state.activities = [action.payload];
+        state.activities.push(action.payload);
       }
       // Store the updated activities in sessionStorage
       sessionStorage.setItem("activities", JSON.stringify(state.activities));
@@ -100,25 +98,12 @@ const provSlice = createSlice({
         state.agents[existingAgentIndex] = action.payload;
       } else {
         // Only add if the agent does not exist
-        state.agents = [action.payload];
+        state.agents.push(action.payload);
       }
       // Store the updated agents in sessionStorage
       sessionStorage.setItem("agents", JSON.stringify(state.agents));
     },
     addRelationship(state, action: PayloadAction<IRelationship[]>) {
-      // // Check if the relationship already exists by id
-      // const existingRelationshipIndex = state.relationships.findIndex(
-      //   (relationship) => relationship.id === action.payload.id
-      // );
-
-      // if (existingRelationshipIndex >= 0) {
-      //   // Update the existing relationship
-      //   state.relationships[existingRelationshipIndex] = action.payload;
-      // } else {
-      //   // Only add if the relationship does not exist
-      //   state.relationships = [action.payload];
-      // }
-
       action.payload.forEach((newRelationship) => {
         const existingRelationshipIndex = state.relationships.findIndex(
           (relationship) =>

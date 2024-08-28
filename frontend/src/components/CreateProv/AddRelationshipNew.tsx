@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Dropdown from "../Common/Dropdown";
 import { IRelationship, addRelationship } from "../../redux/reducers/provSlice";
@@ -11,10 +11,11 @@ export default function AddRelationshipNew() {
   const generateUniqueId = () => {
     return `prov-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   };
+
   const entities = useAppSelector((state: any) => state.prov.entities);
   const activities = useAppSelector((state: any) => state.prov.activities);
   const agents = useAppSelector((state: any) => state.prov.agents);
-  const relationships1 = useAppSelector(
+  const relationshipsFromStore = useAppSelector(
     (state: any) => state.prov.relationships
   );
 
@@ -26,6 +27,12 @@ export default function AddRelationshipNew() {
       object: "",
     },
   ]);
+
+  useEffect(() => {
+    if (relationshipsFromStore.length > 0) {
+      setRelationships(relationshipsFromStore);
+    }
+  }, [relationshipsFromStore]);
 
   const relationshipTypes: Record<string, string[]> = {
     "Entity-Activity": ["wasGeneratedBy", "used", "WasInvalidatedBy"],
@@ -50,10 +57,35 @@ export default function AddRelationshipNew() {
   };
 
   const handleChange = (index: number, field: string, value: string) => {
-    const newRelationships = relationships.map((rel, i) =>
-      i === index ? { ...rel, [field]: value } : rel
+    setRelationships((prevRelationships) =>
+      prevRelationships.map((rel, i) => {
+        if (i === index) {
+          const updatedRel = { ...rel, [field]: value };
+
+          if (field === "subject" || field === "object") {
+            // Reset the relationship field when subject or object changes
+            updatedRel.relationship = "";
+
+            // Automatically set relationship if one or more options are available
+            const subjectType = determineType(updatedRel.subject);
+            const objectType = determineType(updatedRel.object);
+            const relationshipKey =
+              `${subjectType}-${objectType}` as keyof typeof relationshipTypes;
+            const availableRelationships =
+              relationshipTypes[relationshipKey] || [];
+
+            if (availableRelationships.length === 1) {
+              updatedRel.relationship = availableRelationships[0];
+            } else if (availableRelationships.length > 1) {
+              updatedRel.relationship = availableRelationships[0];
+            }
+          }
+
+          return updatedRel;
+        }
+        return rel;
+      })
     );
-    setRelationships(newRelationships);
   };
 
   const getOptionsForDropdown = (type: string) => {
@@ -93,7 +125,7 @@ export default function AddRelationshipNew() {
         (rel) => !rel.subject || !rel.relationship || !rel.object
       )
     ) {
-      toast.error("Please complete all fields before submitting.");
+      toast.error("Please complete all fields before proceeding to next step.");
       return;
     }
 
@@ -106,17 +138,6 @@ export default function AddRelationshipNew() {
     <div className="w-full basis-2/5">
       <div className="flex items-center gap-5">
         <h2 className="text-2xl font-semibold">Add Relationship</h2>
-        <div>
-          <Button
-            text="+ New"
-            rounded="rounded-full"
-            type="outlined"
-            size="sm"
-            onClick={() => {
-              handleAddNewSet();
-            }}
-          />
-        </div>
       </div>
       {relationships.map((rel, index) => {
         const subjectType = determineType(rel.subject);
@@ -170,26 +191,20 @@ export default function AddRelationshipNew() {
           </div>
         );
       })}
-      <div className="flex gap-10">
+      <div className="w-full flex justify-center gap-4">
         <Button
-          text="Back"
+          text="New Relationship"
           rounded="rounded-full"
-          block
           type="outlined"
           size="sm"
-          onClick={() => {
-            //   handleSave();
-          }}
+          onClick={handleAddNewSet}
         />
         <Button
-          text="Submit Form"
+          text="Visualize"
           rounded="rounded-full"
-          block
           type="primary"
           size="sm"
-          onClick={() => {
-            handleSubmit();
-          }}
+          onClick={handleSubmit}
         />
       </div>
     </div>

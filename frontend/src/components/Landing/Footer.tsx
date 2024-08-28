@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="flex justify-between">
         <p className="font-medium text-gray-400">About</p>
         <p className="font-medium text-gray-400">Contact Us</p>
-        <p className="font-medium text-gray-400">Terms of USe</p>
+        <p className="font-medium text-gray-400">Terms of Use</p>
       </div>
       <div className="self-center">
         <p className="font-medium text-gray-400">

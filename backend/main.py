@@ -6,7 +6,7 @@ from provstore.api import Api
 from prov.dot import prov_to_dot
 import os
 import pydot
-from fastapi.responses import RedirectResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 import requests
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
@@ -21,7 +21,7 @@ app = FastAPI()
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["https://interact-prov-3414.web.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,8 +48,6 @@ class Activity(BaseModel):
     description: str
     start_time: str
     end_time: str
-    consumed: str
-    generated: str
 
 class Agent(BaseModel):
     agent_id: str
@@ -84,7 +82,7 @@ class ExportRequest(BaseModel):
 
 @app.get("/")
 async def root():
-    return RedirectResponse(url="/prov")
+    return {"Interact-PROV": "Welcome to Interact-PROV!"}
 
 @app.get("/prov")
 def prov():
@@ -145,7 +143,6 @@ async def create_provenance_graph(provenance: ProvenanceRequest):
             "foaf:name": activity.name,
             "prov:description": activity.description
         })
-        d1.wasGeneratedBy(f"tmpl:{activity.generated}", aId)
     
     # Add agents
     for agent in provenance.agents:
@@ -158,10 +155,31 @@ async def create_provenance_graph(provenance: ProvenanceRequest):
     
     # Add relationships
     for relationship in provenance.relationships:
-        if relationship.relationship == "used":
-            d1.used(f"var:{relationship.object}", f"var:{relationship.subject}")
+        subject = f"var:{relationship.subject}"
+        obj = f"var:{relationship.object}"
+        
+        if relationship.relationship == "wasGeneratedBy":
+            d1.wasGeneratedBy(subject, obj)
+        elif relationship.relationship == "used":
+            d1.used(subject, obj)
+        elif relationship.relationship == "WasInvalidatedBy":
+            d1.wasInvalidatedBy(subject, obj)
+        elif relationship.relationship == "wasDerivedFrom":
+            d1.wasDerivedFrom(subject, obj)
         elif relationship.relationship == "hadMember":
-            d1.hadMember(f"var:{relationship.subject}", f"var:{relationship.object}")
+            d1.hadMember(subject, obj)
+        elif relationship.relationship == "WasStartedBy":
+            d1.wasStartedBy(subject, obj)
+        elif relationship.relationship == "WasEndedBy":
+            d1.wasEndedBy(subject, obj)
+        elif relationship.relationship == "wasAssociatedWith":
+            d1.wasAssociatedWith(subject, obj)
+        elif relationship.relationship == "actedOnBehalfOf":
+            d1.actedOnBehalfOf(subject, obj)
+        elif relationship.relationship == "wasAttributedTo":
+            d1.wasAttributedTo(subject, obj)
+        elif relationship.relationship == "wasInformedBy":
+            d1.wasInformedBy(subject, obj)
 
     if provenance.documents.isPublic:
         api = Api(base_url=PROVSTORE_API_URL, username=PROVSTORE_USERNAME, api_key=PROVSTORE_API_KEY)
@@ -235,7 +253,6 @@ async def export_provenance_documet(provenance: ExportRequest):
             "foaf:name": activity.name,
             "prov:description": activity.description
         })
-        d1.wasGeneratedBy(f"tmpl:{quote(activity.generated)}", aId)
     
     # Add agents
     for agent in provenance.agents:
@@ -248,10 +265,31 @@ async def export_provenance_documet(provenance: ExportRequest):
     
     # Add relationships
     for relationship in provenance.relationships:
-        if relationship.relationship == "used":
-            d1.used(f"var:{quote(relationship.object)}", f"var:{quote(relationship.subject)}")
+        subject = f"var:{quote(relationship.subject)}"
+        obj = f"var:{quote(relationship.object)}"
+        
+        if relationship.relationship == "wasGeneratedBy":
+            d1.wasGeneratedBy(subject, obj)
+        elif relationship.relationship == "used":
+            d1.used(subject, obj)
+        elif relationship.relationship == "WasInvalidatedBy":
+            d1.wasInvalidatedBy(subject, obj)
+        elif relationship.relationship == "wasDerivedFrom":
+            d1.wasDerivedFrom(subject, obj)
         elif relationship.relationship == "hadMember":
-            d1.hadMember(f"var:{quote(relationship.subject)}", f"var:{quote(relationship.object)}")
+            d1.hadMember(subject, obj)
+        elif relationship.relationship == "WasStartedBy":
+            d1.wasStartedBy(subject, obj)
+        elif relationship.relationship == "WasEndedBy":
+            d1.wasEndedBy(subject, obj)
+        elif relationship.relationship == "wasAssociatedWith":
+            d1.wasAssociatedWith(subject, obj)
+        elif relationship.relationship == "actedOnBehalfOf":
+            d1.actedOnBehalfOf(subject, obj)
+        elif relationship.relationship == "wasAttributedTo":
+            d1.wasAttributedTo(subject, obj)
+        elif relationship.relationship == "wasInformedBy":
+            d1.wasInformedBy(subject, obj)
     
     # Determine the format to return
     if provenance.docFormat == "provn":
