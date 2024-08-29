@@ -7,6 +7,14 @@ micros:
     primary: true
     run: uvicorn main:app
     public: true
+    # commands:
+    #   - apt update
+    #   - apt install -y graphviz
+    #   - echo 'export PATH=$PATH:/usr/bin/dot' >> ~/.bashrc
+    #   - source ~/.bashrc
+    #   - which dot
+    #   - dot -V
+    #   - echo $PATH
     presets:
       env:
         - name: PROVSTORE_API_URL

@@ -195,10 +195,10 @@ async def create_provenance_graph(provenance: ProvenanceRequest):
     dot = prov_to_dot(d1)
 
     # Set image resolution (DPI)
-    dot.set_graph_defaults(dpi=600, size="15, 20!")
+    # dot.set_graph_defaults(dpi=600, size="15, 20!")
 
     # Get the DOT source as a string
-    # dot_source = dot.to_string()
+    dot_source = dot.to_string()
 
     # Render the graph to a file (PNG format)
     # output_file_path = "prov_graph.png"
@@ -209,16 +209,16 @@ async def create_provenance_graph(provenance: ProvenanceRequest):
     # return {"dot": dot_source}
 
     # Generate the PNG image as bytes using create_png()
-    png_data = dot.create_png()
+    # png_data = dot.create_png()
 
     # Convert the PNG bytes to base64
-    img_base64 = base64.b64encode(png_data).decode('utf-8')
+    # img_base64 = base64.b64encode(png_data).decode('utf-8')
 
     # Return the base64 string as a response
     if provenance.documents.isPublic:
-        return JSONResponse(content={"image": img_base64, "id": provstore_id})
+        return JSONResponse(content={"dot": dot_source, "id": provstore_id})
     else:
-        return JSONResponse(content={"image": img_base64})
+        return JSONResponse(content={"dot": dot_source})
 
 @app.post("/prov/export-prov")
 async def export_provenance_documet(provenance: ExportRequest):
